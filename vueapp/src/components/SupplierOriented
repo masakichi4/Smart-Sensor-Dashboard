@@ -1,0 +1,319 @@
+<template>
+  <v-container fluid grid-list-md >
+  	<v-layout row wrap>
+
+        <v-flex xs12 sm6 md4>
+	      <v-layout wrap>
+
+	      	<v-card >
+	      	  <v-text-field
+	      	  v-model="search"
+	      	  append-icon="search"
+	      	  label="Search sensor/node ID, type, warehouse name"
+	      	  single-line
+	      	  hide-details
+	      	  box>
+	      	  </v-text-field>
+	      	<v-card-title class="green lighten-3"> Active: </v-card-title>
+		      	<v-data-table
+		      	:headers="headers"
+		      	:items="activeSensors"
+		      	class="elevation-1"
+		      	:search="search">
+		      	  <template slot="items" slot-scope="sensors">
+		      	    <td> {{sensors.item.sensorId}}</td>
+		      	    <td>{{sensors.item.nodeId}} </td>
+		      	    <td>{{sensors.item.sensorType}}</td>
+		      	    <td>{{sensors.item.sensorLocation}}</td>
+		      	  </template>
+		      	</v-data-table>
+		    <v-card-title class="red lighten-3"> Inactive: </v-card-title>
+		      	<v-data-table
+		      	:headers="headers"
+		      	:items="inactiveSensors"
+		      	class="elevation-1"
+		      	:search="search">
+		      	  <template slot="items" slot-scope="sensors">
+		      	    <td> {{sensors.item.sensorId}}</td>
+		      	    <td>{{sensors.item.nodeId}} </td>
+		      	    <td>{{sensors.item.sensorType}}</td>
+		      	    <td>{{sensors.item.sensorLocation}}</td>
+		      	  </template>
+		      	</v-data-table>   	
+	      	</v-card>
+	      </v-layout>
+	  </v-flex>
+	  	<v-flex d-flex xs6 sm4 md2>
+	      <v-layout row wrap>
+	      	<v-flex d-flex>
+		      <v-card color="green lighten-1" dark hover>
+		        <v-card-title class="title">Active Sensors:
+		        </v-card-title>
+		        <v-card-text class="display-1 font-weight-thin">
+		        	{{((activeSensors.length/Object.values(this.sensors).length)*100).toFixed(0)}}%<br/>
+		        	<span class="title font-weight-thin">{{activeSensors.length}} out of {{Object.values(this.sensors).length}}</span>
+		        </v-card-text>
+		       </v-card>
+	        </v-flex>
+
+		    <v-flex d-flex>
+		      <v-layout row wrap>
+		      	<v-flex d-flex>
+		          <v-card color="green lighten-3" hover>
+		        	<v-card-title class="title">Active Nodes:
+		            </v-card-title>
+		            <v-card-text class="display-1 font-weight-thin">
+		        	  {{((activeNodes.length/Object.values(this.nodes).length)*100).toFixed(0)}}%<br/>
+		        	  <span class="title font-weight-thin">{{activeNodes.length}} out of {{Object.values(this.nodes).length}}</span>
+		            </v-card-text>
+		          </v-card>
+		        </v-flex>
+		      </v-layout>
+		    </v-flex>
+	    
+	        <v-flex d-flex>
+	          <v-layout row wrap>
+		      	<v-flex d-flex>
+		          <v-card color="blue lighten-3" hover>
+		            <v-card-title class="title">Monitored Warehouses:
+		            </v-card-title>
+		            <v-card-text class="display-1 font-weight-thin">
+		        	  {{monitoredWarehouses.length}} out of {{warehouses.length}}
+		            </v-card-text>
+		          </v-card>
+		        </v-flex>
+		      </v-layout>
+	        </v-flex>
+
+		  </v-layout>
+		</v-flex>
+
+		<v-flex d-flex xs6 sm4 md2>
+	      <v-layout row wrap>
+	      	<v-flex d-flex>
+	          <v-card color="red lighten-1" dark hover>
+		        	<v-card-title primary class="title">Inactive Sensors:
+		        	</v-card-title>
+		        	<v-card-text class="display-1 font-weight-thin">{{((inactiveSensors.length/Object.values(this.sensors).length)*100).toFixed(0)}}%<br/>
+		        	<span class="title font-weight-thin">{{inactiveSensors.length}} out of {{Object.values(this.sensors).length}}</span>
+		        	</v-card-text>
+		       </v-card>
+	        </v-flex>
+
+	        <v-flex d-flex>
+	          <v-card color="red lighten-3" hover>
+		        	<v-card-title primary class="title">Inactive Nodes:
+		        	</v-card-title>
+		        	<v-card-text class="display-1 font-weight-thin">{{((inactiveNodes.length/Object.values(this.nodes).length)*100).toFixed(0)}}%<br/>
+		        	<span class="title font-weight-thin">{{inactiveNodes.length}} out of {{Object.values(this.nodes).length}}</span>
+		        	</v-card-text>
+		       </v-card>
+	        </v-flex>
+
+	        <v-flex d-flex>
+	          <v-card color="gray lighten-3" dark hover>
+		        	<v-card-title class="title font-weight-thin">Unmonitored Warehouses:
+		        	</v-card-title>
+		        	<v-card-text class="display-1 font-weight-thin">{{warehouses.length-monitoredWarehouses.length}} out of {{warehouses.length}}
+		        	</v-card-text>
+		       </v-card>
+	        </v-flex>
+
+		  </v-layout>
+		</v-flex>
+
+		<v-flex d-flex xs6 sm4 md2>
+	      <v-layout row wrap>
+
+	        <v-flex d-flex>
+		      <v-layout row wrap>
+		      	<v-flex d-flex>
+		          <v-card hover>
+		        	<v-card-title primary class="title">Total Sensors:
+		        	</v-card-title>
+		        	<v-card-text class="display-1 font-weight-thin">{{Object.values(this.sensors).length}}
+		        	</v-card-text>
+		          </v-card>
+		        </v-flex>
+		      </v-layout>
+		    </v-flex>
+
+		    <v-flex d-flex>
+		      <v-layout row wrap>
+		      	<v-flex d-flex>
+		          <v-card hover>
+		        	<v-card-title primary class="title">Total Nodes:
+		        	</v-card-title>
+		        	<v-card-text class="display-1 font-weight-thin">{{Object.values(this.nodes).length}}
+		        	</v-card-text>
+		          </v-card>
+		        </v-flex>
+		      </v-layout>
+		    </v-flex>
+	    
+	        <v-flex d-flex>
+	          <v-layout row wrap>
+		      	<v-flex d-flex>
+		          <v-card hover>
+		        	<v-card-title primary class="title">Total Warehouses:
+		        	</v-card-title>
+		        	<v-card-text class="display-1 font-weight-thin">
+		        		{{warehouses.length}}
+		        	</v-card-text>
+		          </v-card>
+		        </v-flex>
+		      </v-layout>
+	        </v-flex>
+
+		  </v-layout>
+		</v-flex>
+
+    </v-layout>
+  </v-container>
+</template>
+
+<script>
+  export default {
+    data: () => ({
+    	search: '',
+    	warehousesShown: [],
+    	headers: [
+    	  {text: 'Sensor ID', align: 'left', value: 'sensorId'},
+    	  {text: 'Node ID', align: 'left', value: 'nodeId'},
+    	  {text: 'Type', align: 'left', value: 'sensorType'},
+    	  {text: 'Warehouse', align: 'left', value: 'sensorLocation'},
+    	],
+    	sensors: {
+    		"12345": {
+    			sensorId: "12345",
+    			nodeId: "123",
+    			sensorActivity: true,
+    			sensorType: "Lighting",
+    			sensorReading: "75%",
+    			sensorLocation: "ABC Warehouse"
+    		},
+    		"54321": {
+    			sensorId: "54321",
+    			nodeId: "123",
+    			sensorActivity: true,
+    			sensorType: "Thermal",
+    			sensorReading: "40F",
+    			sensorLocation: "ABC Warehouse"
+    		},
+    		"11111": {
+    			sensorId: "11111",
+    			nodeId: "321",
+    			sensorActivity: false,
+    			sensorType: "Motion",
+    			sensorReading: "",
+    			sensorLocation: "XYZ Warehouse"
+    		}
+    	},
+    	nodes: {
+    		"123": {
+    			nodeId: "123",
+    			nodeActivity: true,
+    			numSensors: 1,
+    			nodeLocation: "ABC Warehouse"
+    		},
+    		"321": {
+    			nodeId: "321",
+    			nodeActivity: false,
+    			numSensors: "1",
+    			nodeLocation: "XYZ Warehouse"
+    		}
+    	},
+    	warehouses: [
+    	{
+    		warehouseId: "1",
+    		warehouseName: "ABC Warehouse",
+    		warehouseCity: "San Jose",
+    		warehouseMonitored: true,
+    	},
+    	{
+    		warehouseId: "2",
+    		warehouseName: "XYZ Warehouse",
+    		warehouseCity: "Fremont",
+    		warehouseMonitored: true,
+    	},
+    	{
+    		warehouseId: "3",
+    		warehouseName: "SF Warehouse",
+    		warehouseCity: "San Francisco",
+    		warehouseMonitored: false,
+    	},
+    	]
+    }), computed: {
+    	activeSensors() {
+    		let a = [];
+    		var j;
+    		for(j=0;j<Object.values(this.sensors).length;j++) {
+    			if (Object.values(this.sensors)[j].sensorActivity) {
+    				a.push(Object.values(this.sensors)[j])
+    			}
+    		}
+    		return a;
+    	},
+    	inactiveSensors() {
+    		let a = [];
+    		var j;
+    		for(j=0;j<Object.values(this.sensors).length;j++) {
+    			if (!Object.values(this.sensors)[j].sensorActivity) {
+    				a.push(Object.values(this.sensors)[j])
+    			}
+    		}
+    		return a;
+    	},
+    	activeNodes() {
+    		let a = [];
+    		var j;
+    		for(j=0;j<Object.values(this.nodes).length;j++) {
+    			if (Object.values(this.nodes)[j].nodeActivity) {
+    				a.push(Object.values(this.nodes)[j])
+    			}
+    		}
+    		return a;
+    	},
+    	inactiveNodes() {
+    		let a = [];
+    		var j;
+    		for(j=0;j<Object.values(this.nodes).length;j++) {
+    			if (!Object.values(this.nodes)[j].nodeActivity) {
+    				a.push(Object.values(this.nodes)[j])
+    			}
+    		}
+    		return a;
+    	},
+
+    	allTypes() {
+    		let a = [];
+    		var j;
+    		for(j=0;j<Object.values(this.sensors).length;j++) {
+    			if (!a.includes(Object.values(this.sensors)[j].sensorType)) {
+    				a.push(Object.values(this.sensors)[j].sensorType);
+    			}
+    		}
+    		return a;
+    	},
+    	monitoredWarehouses() {
+    		let a = [];
+    		var j;
+    		for(j=0;j<this.warehouses.length;j++) {
+    			if (this.warehouses[j].warehouseMonitored) {
+    				a.push(this.warehouses[j].warehouseName);
+    			}
+    		}
+    		return a;
+    	}
+    }, methods: {
+    	removeFilter(item) {
+    		const index = this.warehousesShown.indexOf(item.sensorLocation)
+    		if (index>=0) this.warehousesShown.splice(index, 1)
+    	}
+    }
+  }
+</script>
+
+<style>
+
+</style>
